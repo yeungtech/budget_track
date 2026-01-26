@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Expense Logger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Log Expense</h2>
+    <form id="expenseForm">
+        <input type="text" id="item" placeholder="Item Name" required>
+        <input type="number" step="0.01" id="price" placeholder="Price (0.00)" required>
+        
+        <label>Type:</label>
+        <select id="type">
+            <option value="Debit" selected>Debit</option>
+            <option value="Credit">Credit</option>
+        </select>
+
+        <label>Category:</label>
+        <select id="category">
+            <option value="Automotive">Automotive</option>
+            <option value="Dining" selected>Dining</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Fees & Interest">Fees & Interest</option>
+            <option value="Gift">Gift</option>
+            <option value="Grocery">Grocery</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Home Related">Home Related</option>
+            <option value="Housing (Rent / Mortgage)">Housing (Rent / Mortgage)</option>
+            <option value="Income">Income</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Kid & Education">Kid & Education</option>
+            <option value="Miscellaneous">Miscellaneous</option>
+            <option value="Personal Care">Personal Care</option>
+            <option value="Pet">Pet</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Tax">Tax</option>
+            <option value="Transport & Fuel">Transport & Fuel</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Travel (Flights / Hotel)">Travel (Flights / Hotel)</option>
+            <option value="Utility">Utility</option>
+        </select>
+
+        <button type="submit" id="submitBtn">Save Expense</button>
+    </form>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyaZsSaqqlC2fGDpWx54cnAPkmvF9v9pStGjrK8psVV9pE_0yrX3ItWRebtzF1bMXsY5A/exec'; // PASTE YOUR URL HERE
+        const form = document.getElementById('expenseForm');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+
+            const payload = {
+                item: document.getElementById('item').value,
+                price: document.getElementById('price').value,
+                type: document.getElementById('type').value,
+                category: document.getElementById('category').value
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', // Essential for Apps Script
+                cache: 'no-cache',
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("Expense Saved!");
+                form.reset();
+                btn.disabled = false;
+                btn.innerText = 'Save Expense';
+            })
+            .catch(error => console.error('Error!', error.message));
+        });
+    </script>
+</body>
+</html>
