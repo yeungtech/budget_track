@@ -1,65 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quick Expense Logger</title>
+    <title>Secure Expense Logger</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-        input, select, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 400px; margin: auto; background-color: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:disabled { background-color: #ccc; }
+        label { font-size: 14px; color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h2>Log Expense</h2>
-    <form id="expenseForm">
-        <input type="text" id="item" placeholder="Item Name" required>
-        <input type="number" step="0.01" id="price" placeholder="Price (0.00)" required>
-        
-        <label>Type:</label>
-        <select id="type">
-            <option value="Debit" selected>Debit</option>
-            <option value="Credit">Credit</option>
-        </select>
+    <div class="card">
+        <h2>Log Expense</h2>
+        <form id="expenseForm">
+            <input type="password" id="password" placeholder="Enter Secret Password" required>
+            <hr>
+            <input type="text" id="item" placeholder="What did you buy?" required>
+            <input type="number" step="0.01" id="price" placeholder="How much? (0.00)" required>
+            
+            <label>Transaction Type</label>
+            <select id="type">
+                <option value="Debit" selected>Debit</option>
+                <option value="Credit">Credit</option>
+            </select>
 
-        <label>Category:</label>
-        <select id="category">
-            <option value="Automotive">Automotive</option>
-            <option value="Dining" selected>Dining</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Fees & Interest">Fees & Interest</option>
-            <option value="Gift">Gift</option>
-            <option value="Grocery">Grocery</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Home Related">Home Related</option>
-            <option value="Housing (Rent / Mortgage)">Housing (Rent / Mortgage)</option>
-            <option value="Income">Income</option>
-            <option value="Insurance">Insurance</option>
-            <option value="Kid & Education">Kid & Education</option>
-            <option value="Miscellaneous">Miscellaneous</option>
-            <option value="Personal Care">Personal Care</option>
-            <option value="Pet">Pet</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Tax">Tax</option>
-            <option value="Transport & Fuel">Transport & Fuel</option>
-            <option value="Transfer">Transfer</option>
-            <option value="Travel (Flights / Hotel)">Travel (Flights / Hotel)</option>
-            <option value="Utility">Utility</option>
-        </select>
+            <label>Category</label>
+            <select id="category">
+                <option value="Automotive">Automotive</option>
+                <option value="Dining" selected>Dining</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Fees & Interest">Fees & Interest</option>
+                <option value="Gift">Gift</option>
+                <option value="Grocery">Grocery</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Home Related">Home Related</option>
+                <option value="Housing (Rent / Mortgage)">Housing (Rent / Mortgage)</option>
+                <option value="Income">Income</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Kid & Education">Kid & Education</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+                <option value="Personal Care">Personal Care</option>
+                <option value="Pet">Pet</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Tax">Tax</option>
+                <option value="Transport & Fuel">Transport & Fuel</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Travel (Flights / Hotel)">Travel (Flights / Hotel)</option>
+                <option value="Utility">Utility</option>
+            </select>
 
-        <button type="submit" id="submitBtn">Save Expense</button>
-    </form>
+            <button type="submit" id="submitBtn">Save to Sheet</button>
+        </form>
+    </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyaZsSaqqlC2fGDpWx54cnAPkmvF9v9pStGjrK8psVV9pE_0yrX3ItWRebtzF1bMXsY5A/exec'; // PASTE YOUR URL HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyaZsSaqqlC2fGDpWx54cnAPkmvF9v9pStGjrK8psVV9pE_0yrX3ItWRebtzF1bMXsY5A/exec'; // PASTE YOUR DEPLOYMENT URL HERE
         const form = document.getElementById('expenseForm');
 
         form.addEventListener('submit', e => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.innerText = 'Saving...';
+            btn.innerText = 'Syncing...';
 
             const payload = {
+                password: document.getElementById('password').value, // Matches script MY_SECRET
                 item: document.getElementById('item').value,
                 price: document.getElementById('price').value,
                 type: document.getElementById('type').value,
@@ -68,17 +76,23 @@
 
             fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors', // Essential for Apps Script
+                mode: 'no-cors',
                 cache: 'no-cache',
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                alert("Expense Saved!");
-                form.reset();
+                alert("Success! Check your sheet.");
+                // We reset everything BUT the password so you don't have to type it twice
+                form.querySelector('#item').value = '';
+                form.querySelector('#price').value = '';
                 btn.disabled = false;
-                btn.innerText = 'Save Expense';
+                btn.innerText = 'Save to Sheet';
             })
-            .catch(error => console.error('Error!', error.message));
+            .catch(error => {
+                alert("Error! Check console.");
+                console.error('Error!', error.message);
+                btn.disabled = false;
+            });
         });
     </script>
 </body>
