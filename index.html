@@ -1,64 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Secure Expense Logger</title>
+    <title>Expense Logger - Raw</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 400px; margin: auto; background-color: #f4f7f6; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        button { background-color: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        label { font-size: 14px; color: #666; font-weight: bold; }
-        .status-msg { font-size: 14px; text-align: center; margin-top: 10px; font-weight: bold; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 400px; margin: auto; background-color: #f0f2f5; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:disabled { background-color: #6c757d; }
+        label { font-size: 13px; color: #495057; font-weight: 600; margin-top: 5px; display: block; }
+        .status-area { height: 20px; text-align: center; margin-top: 15px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Log Expense</h2>
+        <h2 style="margin-top:0">Log to Raw</h2>
         <form id="expenseForm">
-            <input type="password" id="password" placeholder="Enter Secret Password" required>
-            <hr>
-            <input type="text" id="item" placeholder="What did you buy?" required>
-            <input type="number" step="0.01" id="price" placeholder="How much? (0.00)" required>
+            <input type="password" id="password" placeholder="Secret Password" required>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            <input type="text" id="item" placeholder="What was it?" required>
+            <input type="number" step="0.01" id="price" placeholder="Amount (0.00)" required>
             
-            <label>Transaction Type</label>
+            <label>Type</label>
             <select id="type">
-                <option value="Debit" selected>Debit</option>
+                <option value="Debit">Debit</option>
                 <option value="Credit">Credit</option>
             </select>
 
             <label>Category</label>
             <select id="category">
-                <option value="Automotive">Automotive</option>
                 <option value="Dining" selected>Dining</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Fees & Interest">Fees & Interest</option>
-                <option value="Gift">Gift</option>
                 <option value="Grocery">Grocery</option>
-                <option value="Healthcare">Healthcare</option>
-                <option value="Home Related">Home Related</option>
-                <option value="Housing">Housing</option>
-                <option value="Income">Income</option>
-                <option value="Insurance">Insurance</option>
-                <option value="Education">Education</option>
-                <option value="Miscellaneous">Miscellaneous</option>
-                <option value="Personal Care">Personal Care</option>
-                <option value="Pet">Pet</option>
+                <option value="Transport">Transport</option>
                 <option value="Shopping">Shopping</option>
-                <option value="Tax">Tax</option>
-                <option value="Transport & Fuel">Transport & Fuel</option>
-                <option value="Travel">Travel</option>
-                <option value="Utility">Utility</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
             </select>
 
-            <button type="submit" id="submitBtn">Save to Sheet</button>
-            <div id="status" class="status-msg"></div>
+            <button type="submit" id="submitBtn">Send to Sheet</button>
+            <div id="status" class="status-area"></div>
         </form>
     </div>
 
     <script>
-        // REPLACE THIS with your specific Web App URL after redeploying
+        // Ensure this URL is updated if your deployment URL changes!
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzgtzABz75u1xSRayna-ZjKUfeefXhB4zLXkoO1PtWw0bKx9rmGuWoebS9amzahNuQ/exec';
         const form = document.getElementById('expenseForm');
         const status = document.getElementById('status');
@@ -67,9 +53,8 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
-            btn.innerText = 'Syncing...';
-            status.innerText = "Sending data...";
-            status.style.color = "black";
+            btn.innerText = 'Processing...';
+            status.innerText = "Connecting to Google...";
 
             const payload = {
                 password: document.getElementById('password').value,
@@ -84,26 +69,25 @@
                 body: JSON.stringify(payload),
                 headers: { "Content-Type": "text/plain;charset=utf-8" }
             })
-            .then(res => res.text()) // Get the actual text response ("Success" or "Error:...")
-            .then(responseText => {
-                if (responseText === "Success") {
-                    status.innerText = "✅ Successfully saved!";
+            .then(res => res.text())
+            .then(text => {
+                if (text === "Success") {
+                    status.innerText = "✅ Saved to 'raw' sheet!";
                     status.style.color = "green";
                     document.getElementById('item').value = '';
                     document.getElementById('price').value = '';
                 } else {
-                    status.innerText = "❌ " + responseText;
+                    status.innerText = "❌ " + text;
                     status.style.color = "red";
                 }
             })
-            .catch(error => {
-                status.innerText = "❌ Network Error. Check console.";
+            .catch(err => {
+                status.innerText = "❌ Connection Failed";
                 status.style.color = "red";
-                console.error('Error!', error);
             })
             .finally(() => {
                 btn.disabled = false;
-                btn.innerText = 'Save to Sheet';
+                btn.innerText = 'Send to Sheet';
             });
         });
     </script>
