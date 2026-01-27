@@ -57,7 +57,8 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzgtzABz75u1xSRayna-ZjKUfeefXhB4zLXkoO1PtWw0bKx9rmGuWoebS9amzahNuQ/exec'; // PASTE YOUR DEPLOYMENT URL HERE
+        // Ensure this matches your latest Web App Deployment URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzgtzABz75u1xSRayna-ZjKUfeefXhB4zLXkoO1PtWw0bKx9rmGuWoebS9amzahNuQ/exec';
         const form = document.getElementById('expenseForm');
 
         form.addEventListener('submit', e => {
@@ -67,31 +68,35 @@
             btn.innerText = 'Syncing...';
 
             const payload = {
-                password: document.getElementById('password').value, // Matches script MY_SECRET
+                password: document.getElementById('password').value,
                 item: document.getElementById('item').value,
                 price: document.getElementById('price').value,
                 type: document.getElementById('type').value,
                 category: document.getElementById('category').value
             };
 
+            // Using 'text/plain' content-type avoids CORS preflight issues 
+            // while still allowing Apps Script to read the body.
             fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                }
             })
-            .then(() => {
+            .then(res => {
                 alert("Success! Check your sheet.");
-                // We reset everything BUT the password so you don't have to type it twice
-                form.querySelector('#item').value = '';
-                form.querySelector('#price').value = '';
+                // Reset fields but keep the password for convenience
+                document.getElementById('item').value = '';
+                document.getElementById('price').value = '';
                 btn.disabled = false;
                 btn.innerText = 'Save to Sheet';
             })
             .catch(error => {
-                alert("Error! Check console.");
-                console.error('Error!', error.message);
+                alert("Error! Check the browser console.");
+                console.error('Error!', error);
                 btn.disabled = false;
+                btn.innerText = 'Save to Sheet';
             });
         });
     </script>
