@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Expense Logger - Raw</title>
+    <title>Expense Logger</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 400px; margin: auto; background-color: #f0f2f5; }
@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="card">
-        <h2 style="margin-top:0">Log to Raw</h2>
+        <h2 style="margin-top:0">Log Expense</h2>
         <form id="expenseForm">
             <input type="password" id="password" placeholder="Secret Password" required>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
@@ -32,10 +32,28 @@
             <select id="category">
                 <option value="Dining" selected>Dining</option>
                 <option value="Grocery">Grocery</option>
-                <option value="Transport">Transport</option>
                 <option value="Shopping">Shopping</option>
-                <option value="Bills">Bills</option>
-                <option value="Other">Other</option>
+                
+                <option disabled>──────────</option>
+                
+                <option value="Automotive">Automotive</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Fees & Interest">Fees & Interest</option>
+                <option value="Gift">Gift</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Home Related">Home Related</option>
+                <option value="Housing (Rent / Mortgage)">Housing (Rent / Mortgage)</option>
+                <option value="Income">Income</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Kid & Education">Kid & Education</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+                <option value="Personal Care">Personal Care</option>
+                <option value="Pet">Pet</option>
+                <option value="Tax">Tax</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Transport & Fuel">Transport & Fuel</option>
+                <option value="Travel (Flights / Hotel)">Travel (Flights / Hotel)</option>
+                <option value="Utility">Utility</option>
             </select>
 
             <button type="submit" id="submitBtn">Send to Sheet</button>
@@ -44,7 +62,6 @@
     </div>
 
     <script>
-        // Ensure this URL is updated if your deployment URL changes!
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzgtzABz75u1xSRayna-ZjKUfeefXhB4zLXkoO1PtWw0bKx9rmGuWoebS9amzahNuQ/exec';
         const form = document.getElementById('expenseForm');
         const status = document.getElementById('status');
@@ -72,7 +89,7 @@
             .then(res => res.text())
             .then(text => {
                 if (text === "Success") {
-                    status.innerText = "✅ Saved to 'raw' sheet!";
+                    status.innerText = "✅ Saved to sheet!";
                     status.style.color = "green";
                     document.getElementById('item').value = '';
                     document.getElementById('price').value = '';
