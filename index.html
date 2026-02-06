@@ -2,20 +2,38 @@
 <html>
 <head>
     <title>Expense Logger</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
     <style>
-        /* padding-top: 35px gives you that 25px extra drop from the previous version */
+        /* Prevent the page from scrolling/bouncing */
+        html, body { 
+            height: 100%; 
+            overflow: hidden; 
+            position: fixed; 
+            width: 100%;
+            background-color: #121212;
+            margin: 0;
+            padding: 0;
+        }
+
         body { 
             font-family: -apple-system, sans-serif; 
-            padding: 35px 10px 10px 10px; 
-            max-width: 400px; 
-            margin: auto; 
-            background-color: #121212; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 35px drop from top as requested */
+            padding-top: 35px; 
         }
         
-        .card { background: #1e1e1e; padding: 15px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #ffffff; }
+        .card { 
+            background: #1e1e1e; 
+            padding: 15px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            color: #ffffff;
+            width: 90%;
+            max-width: 370px;
+        }
         
-        /* Larger heading for better visibility */
         h2 { margin: 0 0 15px 0; font-size: 1.6rem; color: #ffffff; text-align: center; font-weight: 700; }
         
         input, select, button { 
@@ -25,7 +43,7 @@
             border: 1px solid #444444; 
             border-radius: 10px; 
             box-sizing: border-box; 
-            font-size: 16px; /* Prevents auto-zoom */
+            font-size: 16px; 
             background-color: #2a2a2a; 
             color: #ffffff; 
             appearance: none;
@@ -36,7 +54,16 @@
 
         hr { border: 0; border-top: 1px solid #333; margin: 10px 0; }
         
-        button { background-color: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        /* Button made 10px taller (padding increased by 5px top/bottom) */
+        button { 
+            background-color: #28a745; 
+            color: white; 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 10px;
+            padding: 17px 12px; 
+        }
         button:active { background-color: #218838; transform: scale(0.98); }
         
         label { font-size: 12px; color: #888; font-weight: 600; margin-bottom: 2px; display: block; }
@@ -113,6 +140,20 @@
     </div>
 
     <script>
+        // --- Viewport Locking Script ---
+        const handleViewport = () => {
+            const vv = window.visualViewport;
+            // Force the body to stay at the size of the visible area
+            document.body.style.height = vv.height + 'px';
+            window.scrollTo(0, 0);
+        };
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleViewport);
+            window.visualViewport.addEventListener('scroll', handleViewport);
+        }
+
+        // --- Original Logic ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzgtzABz75u1xSRayna-ZjKUfeefXhB4zLXkoO1PtWw0bKx9rmGuWoebS9amzahNuQ/exec';
         const form = document.getElementById('expenseForm');
         const status = document.getElementById('status');
