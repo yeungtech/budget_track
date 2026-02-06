@@ -4,24 +4,31 @@
     <title>Expense Logger</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 10px; max-width: 400px; margin: auto; background-color: #121212; }
+        /* padding-top: 35px gives you that 25px extra drop from the previous version */
+        body { 
+            font-family: -apple-system, sans-serif; 
+            padding: 35px 10px 10px 10px; 
+            max-width: 400px; 
+            margin: auto; 
+            background-color: #121212; 
+        }
+        
         .card { background: #1e1e1e; padding: 15px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #ffffff; }
         
-        /* Smaller font but readable */
-        h2 { margin: 0 0 10px 0; font-size: 1.1rem; color: #aaaaaa; text-align: center; }
+        /* Larger heading for better visibility */
+        h2 { margin: 0 0 15px 0; font-size: 1.6rem; color: #ffffff; text-align: center; font-weight: 700; }
         
-        /* Larger touch targets for phone use */
         input, select, button { 
             width: 100%; 
-            padding: 12px; /* Increased padding for better tap-ability */
+            padding: 12px; 
             margin: 5px 0; 
             border: 1px solid #444444; 
             border-radius: 10px; 
             box-sizing: border-box; 
-            font-size: 16px; /* 16px prevents iOS auto-zoom on focus */
+            font-size: 16px; /* Prevents auto-zoom */
             background-color: #2a2a2a; 
             color: #ffffff; 
-            appearance: none; /* Removes default styling for cleaner look */
+            appearance: none;
         }
 
         .input-row { display: flex; gap: 10px; align-items: flex-end; }
